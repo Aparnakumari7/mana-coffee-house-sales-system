@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Mana Coffee House Owner Dashboard - Real-time sales analytics, KPIs, and performance insights across all locations.">
+  <title>Mana Coffee House — Dashboard</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <!-- Plotly.js for charts -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+
+<body>
+  <div class="dashboard-page">
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+      <div class="brand">
+        <span class="brand-icon">☕</span>
+        <span>MANA COFFEE HOUSE</span>
+        <span
+          style="color: var(--text-muted); font-size: var(--fs-sm); font-weight: 400; margin-left: 0.5rem;">Dashboard</span>
+      </div>
+      <div class="nav-info">
+        <div class="live-indicator">
+          <span class="live-dot"></span>
+          <span>LIVE</span>
+        </div>
+        <span id="live-clock" style="font-family: 'Courier New', monospace; font-size: var(--fs-sm);">--:--:--</span>
+        <span id="nav-user-name">Owner</span>
+        <button class="btn btn-secondary btn-sm" id="btn-goto-pos">Open POS</button>
+        <button class="btn btn-secondary btn-sm" id="btn-logout">Logout</button>
+      </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+      <!-- Header -->
+      <div class="dashboard-header">
+        <div class="dh-title">
+          <h2>📊 Sales Dashboard</h2>
+          <p id="last-updated">Loading...</p>
+        </div>
+        <div class="dashboard-controls">
+          <select id="time-filter" class="btn btn-secondary btn-sm"
+            style="appearance: auto; padding-right: 2rem;">
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="month">This Month</option>
+            <option value="year">This Year</option>
+          </select>
+          <select id="shop-filter" class="btn btn-secondary btn-sm"
+            style="appearance: auto; padding-right: 2rem; display: none;">
+            <option value="all">All Shops</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" id="btn-refresh">🔄 Refresh</button>
+          <button class="btn btn-secondary btn-sm" id="btn-export">📥 Export CSV</button>
+          <button class="btn btn-danger btn-sm" id="btn-reset-data" title="Regenerate demo data">🔁 Reset Data</button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid stagger-children">
+        <!-- Revenue -->
+        <div class="kpi-card glass-card">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-label">Total Revenue</div>
+          <div class="kpi-value" id="kpi-revenue">₹0</div>
+          <div class="kpi-change positive" id="kpi-revenue-change">↑ 0% vs prev period</div>
+          <div class="kpi-bg-icon">💰</div>
+        </div>
+
+        <!-- Orders -->
+        <div class="kpi-card glass-card">
+          <div class="kpi-icon">📦</div>
+          <div class="kpi-label">Total Orders</div>
+          <div class="kpi-value" id="kpi-orders">0</div>
+          <div class="kpi-change positive" id="kpi-orders-change">↑ 0% vs prev period</div>
+          <div class="kpi-bg-icon">📦</div>
+        </div>
+
+        <!-- Avg Order Value -->
+        <div class="kpi-card glass-card">
+          <div class="kpi-icon">💵</div>
+          <div class="kpi-label">Avg Order Value</div>
+          <div class="kpi-value" id="kpi-aov">₹0</div>
+          <div class="kpi-change positive" id="kpi-aov-change">↑ 0% vs prev period</div>
+          <div class="kpi-bg-icon">💵</div>
+        </div>
+
+        <!-- Best Area -->
+        <div class="kpi-card glass-card">
+          <div class="kpi-icon">🏆</div>
+          <div class="kpi-label">Best Performing Area</div>
+          <div class="kpi-value" id="kpi-best-area" style="font-size: var(--fs-lg);">N/A</div>
+          <div class="kpi-change" id="kpi-best-area-rev" style="color: var(--color-caramel);">₹0</div>
+          <div class="kpi-bg-icon">🏆</div>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="charts-grid">
+        <!-- Sales by Area -->
+        <div class="chart-card glass-card">
+          <div class="chart-title">
+            <span class="chart-icon">📊</span>
+            Sales by Area
+          </div>
+          <div class="chart-container" id="chart-sales-area"></div>
+        </div>
+
+        <!-- Popular Items -->
+        <div class="chart-card glass-card">
+          <div class="chart-title">
+            <span class="chart-icon">🥧</span>
+            Popular Items
+          </div>
+          <div class="chart-container" id="chart-popular-items"></div>
+        </div>
+
+        <!-- Hourly Trend -->
+        <div class="chart-card glass-card">
+          <div class="chart-title">
+            <span class="chart-icon">📈</span>
+            Hourly Sales Trend
+          </div>
+          <div class="chart-container" id="chart-hourly-trend"></div>
+        </div>
+
+        <!-- Target Achievement -->
+        <div class="chart-card glass-card">
+          <div class="chart-title">
+            <span class="chart-icon">🎯</span>
+            Target Achievement
+          </div>
+          <div class="chart-container" id="chart-target"></div>
+        </div>
+      </div>
+
+      <!-- Live Sales Feed -->
+      <div class="sales-feed glass-card">
+        <div class="feed-header">
+          <h3>🕐 Live Sales Feed</h3>
+          <span class="badge badge-success">Auto-updates every 5s</span>
+        </div>
+        <div class="feed-body">
+          <table class="feed-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Location</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody id="feed-tbody">
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                  Loading sales data...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/menu-data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/data-service.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+
+</html>

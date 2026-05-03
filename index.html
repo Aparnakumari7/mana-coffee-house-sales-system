@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mana Coffee House - Centralized Sales Analysis System. Login to access POS or Owner Dashboard.">
+  <title>Mana Coffee House — Login</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+  <div class="login-page">
+    <!-- Animated background -->
+    <div class="login-bg"></div>
+
+    <!-- Login Card -->
+    <div class="login-card glass-card" id="login-card">
+      <div class="login-logo">
+        <span class="logo-icon">☕</span>
+        <h1>MANA COFFEE HOUSE</h1>
+        <p class="tagline">"Taste That Brings Us Together"</p>
+      </div>
+
+      <form class="login-form" id="login-form" onsubmit="return handleLogin(event)">
+        <!-- Role Selector -->
+        <div class="input-group">
+          <label>I am a</label>
+          <div class="role-selector">
+            <button type="button" class="role-option active" data-role="salesperson" onclick="selectRole('salesperson', this)">
+              <span class="role-emoji">🧑‍💼</span>
+              Salesperson
+            </button>
+            <button type="button" class="role-option" data-role="owner" onclick="selectRole('owner', this)">
+              <span class="role-emoji">👔</span>
+              Owner
+            </button>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="input-group">
+          <label for="login-email">Email Address</label>
+          <input
+            type="email"
+            id="login-email"
+            class="input-field"
+            placeholder="Enter your email"
+            value="east@mana.com"
+            required
+          >
+        </div>
+
+        <!-- Password -->
+        <div class="input-group">
+          <label for="login-password">Password</label>
+          <input
+            type="password"
+            id="login-password"
+            class="input-field"
+            placeholder="Enter your password"
+            value="sales123"
+            required
+          >
+        </div>
+
+        <!-- Shop Selector (salesperson only) -->
+        <div class="input-group" id="shop-selector-group">
+          <label for="shop-selector">Shop Location</label>
+          <select id="shop-selector" class="input-field">
+            <option value="EAST001" selected>📍 East Hyderabad</option>
+            <option value="WEST001">📍 West Hyderabad</option>
+            <option value="NORTH001">📍 North Hyderabad</option>
+            <option value="SOUTH001">📍 South Hyderabad</option>
+          </select>
+        </div>
+
+        <!-- Error message -->
+        <div class="login-error" id="login-error">
+          Invalid email or password. Please try again.
+        </div>
+
+        <!-- Login Button -->
+        <button type="submit" class="btn btn-primary btn-lg login-btn w-full" id="login-btn">
+          ☕ Sign In
+        </button>
+      </form>
+
+      <!-- Demo Credentials -->
+      <div class="demo-credentials">
+        <h4>🔑 Demo Credentials</h4>
+        <p>
+          <strong>Owner:</strong> <code>owner@mana.com</code> / <code>owner123</code><br>
+          <strong>Sales (East):</strong> <code>east@mana.com</code> / <code>sales123</code><br>
+          <strong>Sales (West):</strong> <code>west@mana.com</code> / <code>sales123</code><br>
+          <strong>Sales (North/South):</strong> <code>north@</code> or <code>south@mana.com</code>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/menu-data.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    let selectedRole = 'salesperson';
+
+    // Check if already logged in
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = Auth.getSession();
+      if (session) {
+        redirectToApp(session.role);
+      }
+    });
+
+    function selectRole(role, el) {
+      selectedRole = role;
+      document.querySelectorAll('.role-option').forEach(btn => btn.classList.remove('active'));
+      el.classList.add('active');
+
+      const shopGroup = document.getElementById('shop-selector-group');
+      const emailField = document.getElementById('login-email');
+      const passField = document.getElementById('login-password');
+
+      if (role === 'owner') {
+        shopGroup.style.display = 'none';
+        emailField.value = 'owner@mana.com';
+        passField.value = 'owner123';
+      } else {
+        shopGroup.style.display = 'flex';
+        emailField.value = 'east@mana.com';
+        passField.value = 'sales123';
+      }
+
+      // Clear error
+      document.getElementById('login-error').classList.remove('show');
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+
+      if (!email || !password) {
+        errorEl.textContent = 'Please enter both email and password.';
+        errorEl.classList.add('show');
+        return false;
+      }
+
+      const session = await Auth.login(email, password);
+
+      if (!session) {
+        errorEl.textContent = 'Invalid email or password. Please try again.';
+        errorEl.classList.add('show');
+
+        // Shake animation
+        const card = document.getElementById('login-card');
+        card.style.animation = 'none';
+        card.offsetHeight; // trigger reflow
+        card.style.animation = 'shake 0.4s ease';
+        return false;
+      }
+
+      // Success — redirect
+      errorEl.classList.remove('show');
+      Utils.showToast(`Welcome, ${session.name}! ☕`, 'success');
+
+      // Brief delay for toast
+      setTimeout(() => redirectToApp(session.role), 500);
+      return false;
+    }
+
+    function redirectToApp(role) {
+      if (role === 'owner') {
+        window.location.href = 'dashboard.html';
+      } else {
+        window.location.href = 'pos.html';
+      }
+    }
+  </script>
+
+  <style>
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+  </style>
+</body>
+</html>

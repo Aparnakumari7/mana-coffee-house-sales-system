@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mana Coffee House POS - Record customer orders, manage cart, and generate PDF bills.">
+  <title>Mana Coffee House — POS</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/pos.css">
+  <!-- html2pdf for bill generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+  <div class="pos-page">
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+      <div class="brand">
+        <span class="brand-icon">☕</span>
+        <span>MANA COFFEE HOUSE</span>
+        <span style="color: var(--text-muted); font-size: var(--fs-sm); font-weight: 400; margin-left: 0.5rem;">POS</span>
+      </div>
+      <div class="nav-info">
+        <button class="btn btn-primary btn-sm" id="btn-view-dashboard" onclick="window.location.href='dashboard.html'" style="margin-right: 0.5rem;">📊 Dashboard</button>
+        <span class="shop-badge" id="nav-shop-name">East Hyderabad</span>
+        <span id="nav-user-name">Staff</span>
+        <button class="btn btn-secondary btn-sm" id="btn-logout">Logout</button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pos-content">
+      <!-- LEFT: Menu Panel -->
+      <div class="menu-panel">
+        <!-- Category Tabs -->
+        <div class="category-tabs" id="category-tabs">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Search Bar -->
+        <div class="menu-search">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="menu-search" class="input-field" placeholder="Search menu items...">
+        </div>
+
+        <!-- Menu Grid -->
+        <div class="menu-grid" id="menu-grid">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- RIGHT: Cart Panel -->
+      <div class="cart-panel">
+        <div class="cart-header">
+          <h3>🛒 Cart <span class="cart-count" id="cart-count">0</span></h3>
+          <button class="btn btn-danger btn-sm" id="btn-clear-cart">Clear</button>
+        </div>
+
+        <!-- Cart Items -->
+        <div class="cart-items" id="cart-items">
+          <div class="cart-empty">
+            <div class="empty-icon">🛒</div>
+            <p>Your cart is empty</p>
+            <p style="font-size: 0.75rem; margin-top: 0.5rem;">Click items to add them</p>
+          </div>
+        </div>
+
+        <!-- Cart Footer -->
+        <div class="cart-footer">
+          <!-- Totals -->
+          <div class="cart-totals">
+            <div class="total-row">
+              <span>Subtotal</span>
+              <span id="subtotal-value">₹0.00</span>
+            </div>
+            <div class="total-row">
+              <span>GST (5%)</span>
+              <span id="tax-value">₹0.00</span>
+            </div>
+            <div class="total-row">
+              <span>Discount</span>
+              <span id="discount-value" style="color: var(--color-success);">₹0.00</span>
+            </div>
+            <div class="total-row grand-total">
+              <span>TOTAL</span>
+              <span class="total-value" id="total-value">₹0.00</span>
+            </div>
+          </div>
+
+          <!-- Customer Details -->
+          <div class="customer-section">
+            <input type="text" id="customer-name" class="input-field" placeholder="Customer Name *" maxlength="50">
+            <input type="tel" id="customer-phone" class="input-field" placeholder="Phone Number (optional)" maxlength="15">
+          </div>
+
+          <!-- Discount -->
+          <div class="discount-row">
+            <input type="text" id="discount-input" class="input-field" placeholder="Discount code">
+            <button class="btn btn-secondary btn-sm" id="btn-apply-discount">Apply</button>
+          </div>
+
+          <!-- Actions -->
+          <div class="cart-actions">
+            <button class="btn btn-success btn-lg btn-generate" id="btn-generate-bill" disabled style="opacity: 0.5;">
+              🧾 Generate Bill
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bill Preview Modal -->
+  <div class="modal-overlay hidden" id="bill-modal-overlay">
+    <div class="modal-content bill-preview">
+      <div class="modal-header">
+        <h3>🧾 Bill Preview</h3>
+        <button class="btn btn-icon btn-secondary" id="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="bill-content" id="bill-preview-content">
+          <!-- Bill HTML rendered here -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-close-bottom" onclick="POS._closeModal()">Close</button>
+        <button class="btn btn-primary" id="btn-download-pdf">📥 Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/menu-data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/data-service.js"></script>
+  <script src="js/pdf-generator.js"></script>
+  <script src="js/pos.js"></script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+/* ============================================================
+   MANA COFFEE HOUSE — Dashboard Page Styles
+   ============================================================ */
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--color-bg-primary);
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: var(--space-lg) var(--space-xl);
+  overflow-y: auto;
+}
+
+/* ---- Dashboard Header ---- */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.dashboard-header .dh-title h2 {
+  font-size: var(--fs-2xl);
+  margin-bottom: 0.25rem;
+}
+
+.dashboard-header .dh-title p {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.dashboard-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.dashboard-controls .input-field {
+  width: 150px;
+  padding: 0.5rem 0.8rem;
+  font-size: var(--fs-xs);
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--fs-xs);
+  color: var(--color-success);
+  font-weight: var(--fw-medium);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: pulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 6px rgba(92, 184, 92, 0.5);
+}
+
+/* ---- KPI Cards ---- */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.kpi-card {
+  padding: var(--space-lg);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease both;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.kpi-card:nth-child(1)::before { background: linear-gradient(90deg, var(--color-gold), var(--color-caramel)); }
+.kpi-card:nth-child(2)::before { background: linear-gradient(90deg, var(--color-info), #4a9fc9); }
+.kpi-card:nth-child(3)::before { background: linear-gradient(90deg, var(--color-success), #3d9e3d); }
+.kpi-card:nth-child(4)::before { background: linear-gradient(90deg, #c084fc, #a855f7); }
+
+.kpi-card .kpi-icon {
+  font-size: 1.6rem;
+  margin-bottom: var(--space-sm);
+}
+
+.kpi-card .kpi-label {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: var(--fw-medium);
+  margin-bottom: 0.3rem;
+}
+
+.kpi-card .kpi-value {
+  font-family: var(--font-heading);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-black);
+  color: var(--color-cream);
+  margin-bottom: 0.3rem;
+}
+
+.kpi-card .kpi-change {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.kpi-card .kpi-change.positive { color: var(--color-success); }
+.kpi-card .kpi-change.negative { color: var(--color-danger); }
+
+.kpi-card .kpi-bg-icon {
+  position: absolute;
+  bottom: -8px;
+  right: -5px;
+  font-size: 4rem;
+  opacity: 0.05;
+}
+
+/* ---- Charts Grid ---- */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.chart-card {
+  padding: var(--space-lg);
+  animation: fadeInUp 0.5s ease both;
+}
+
+.chart-card .chart-title {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--color-cream);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.chart-card .chart-title .chart-icon {
+  font-size: 1.2rem;
+}
+
+.chart-container {
+  width: 100%;
+  min-height: 280px;
+}
+
+/* ---- Live Sales Feed ---- */
+.sales-feed {
+  animation: fadeInUp 0.5s ease both;
+  animation-delay: 0.3s;
+}
+
+.sales-feed .feed-header {
+  padding: var(--space-lg);
+  border-bottom: var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sales-feed .feed-header h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--fs-lg);
+}
+
+.feed-body {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.feed-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.feed-table th {
+  position: sticky;
+  top: 0;
+  background: rgba(26, 15, 10, 0.95);
+  padding: 0.7rem var(--space-md);
+  text-align: left;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: var(--fw-semibold);
+  border-bottom: var(--border-subtle);
+  z-index: 1;
+}
+
+.feed-table td {
+  padding: 0.65rem var(--space-md);
+  font-size: var(--fs-sm);
+  border-bottom: 1px solid rgba(200, 149, 108, 0.05);
+  color: var(--text-secondary);
+}
+
+.feed-table tr {
+  transition: background var(--transition-fast);
+}
+
+.feed-table tbody tr:hover {
+  background: rgba(200, 149, 108, 0.05);
+}
+
+.feed-table .feed-time {
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-family: 'Courier New', monospace;
+}
+
+.feed-table .feed-shop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: var(--fw-medium);
+  color: var(--color-cream);
+}
+
+.feed-table .feed-amount {
+  font-weight: var(--fw-semibold);
+  color: var(--color-caramel);
+}
+
+.feed-table .feed-items {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* New sale highlight */
+.feed-table tr.new-sale {
+  animation: highlightNew 2s ease both;
+}
+
+@keyframes highlightNew {
+  0% {
+    background: rgba(92, 184, 92, 0.2);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1200px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboard-content {
+    padding: var(--space-md);
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}
